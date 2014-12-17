@@ -2,7 +2,7 @@ package com.dandb.dto;
 
 import java.math.BigInteger;
 
-public class Business {
+public class BusinessSearchResult {
 
 	public BigInteger business_id;
 	public String phone_number;

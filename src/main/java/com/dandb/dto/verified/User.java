@@ -1,6 +1,6 @@
 package com.dandb.dto.verified;
 
-class User {
+public class User {
     public Integer user_identifier;
     public String address_code;
     public String address_expiration;
@@ -10,5 +10,5 @@ class User {
     public String phone_created_at;
     public String email_code;
     public String email_created_at;
-    public Boolean is_entitled;
+    public Integer is_entitled;
 }

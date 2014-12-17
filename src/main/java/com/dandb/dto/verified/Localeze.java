@@ -1,6 +1,6 @@
 package com.dandb.dto.verified;
 
-class Localeze {
+public class Localeze {
 
 	public VerifiedValue publish_to_localeze;
 	public VerifiedValue payment_methods;

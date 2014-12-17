@@ -1,11 +1,11 @@
 package com.dandb.dto.verified;
 
-class Business {
+public class Business {
 
     public VerifiedValue payment_methods;
     public VerifiedValue logo;
     public VerifiedValue services;
-    public VerifiedValue phone;
+    public Phone phone;
     public VerifiedValue languages_spoken;
     public VerifiedValue photo1;
     public VerifiedValue website;

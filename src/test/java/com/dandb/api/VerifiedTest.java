@@ -3,8 +3,8 @@ package com.dandb.api;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.dandb.dto.BusinessProfile;
 import com.dandb.dto.BusinessSearchResults;
+import com.dandb.dto.verified.VerifiedBusiness;
 
 public class VerifiedTest {
 
@@ -23,7 +23,7 @@ public class VerifiedTest {
 	@Test
 	public void testFetch() {
 		BusinessSearchResults searchBusinesses = dandb.verified().searchBusinesses("Google");
-		BusinessProfile fetchBusinessProfile = dandb.verified().fetchBusinessProfile(searchBusinesses.results.get(0).business_id);
+		VerifiedBusiness fetchBusinessProfile = dandb.verified().fetchBusinessProfile(searchBusinesses.results.get(0).business_id);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.dandb.dto.verified;
 
-class Social {
+public class Social {
 
 	public VerifiedValue twitter;
 	public VerifiedValue linkedin;

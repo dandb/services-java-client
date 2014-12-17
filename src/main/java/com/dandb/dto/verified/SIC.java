@@ -1,5 +1,5 @@
 package com.dandb.dto.verified;
 
-class SIC {
+public class SIC {
 	public VerifiedValue code1;
 } 

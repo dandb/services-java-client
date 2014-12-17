@@ -1,8 +1,8 @@
 package com.dandb.dto.verified;
 
-class Verified  {
+public class Verified  {
 
-    public boolean transparent_badge;
-    public boolean visible_badge;
+    public String transparent_badge;
+    public String visible_badge;
 
 } 

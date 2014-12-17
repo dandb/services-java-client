@@ -5,11 +5,13 @@ import retrofit.RestAdapter;
 import retrofit.RestAdapter.LogLevel;
 import retrofit.converter.GsonConverter;
 import serial.MetaDeserializer;
+import serial.VerifiedDeserializer;
 
 import com.dandb.dto.AccessToken;
 import com.dandb.dto.BusinessSearchResults;
-import com.dandb.dto.MetaWrapper;
 import com.dandb.dto.OAuthRequest;
+import com.dandb.dto.UserToken;
+import com.dandb.dto.verified.VerifiedBusiness;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,6 +25,8 @@ public class DandB {
 	Gson gson = new GsonBuilder()
 	    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 	    .registerTypeAdapter(BusinessSearchResults.class, new MetaDeserializer<BusinessSearchResults>())
+	    .registerTypeAdapter(VerifiedBusiness.class, new VerifiedDeserializer())
+	    .registerTypeAdapter(UserToken.class, new MetaDeserializer<UserToken>())
 	    .create();
 
 	protected AccessToken accessToken = new AccessToken();
@@ -58,6 +62,10 @@ public class DandB {
 	
 	public Verified verified(){
 		return restAdapter.create(Verified.class);
+	}
+	
+	public UserAuth userAuth(){
+		return restAdapter.create(UserAuth.class);
 	}
 	
 }

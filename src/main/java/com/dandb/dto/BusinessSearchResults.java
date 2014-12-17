@@ -4,6 +4,6 @@ import java.util.List;
 
 public class BusinessSearchResults{
 
-	public List<Business> results;
+	public List<BusinessSearchResult> results;
 	
 }
