@@ -27,5 +27,13 @@ public class Business {
 
     public Verified verified;
     public OwnerTypeStatus business_owner_type_status;
+	public static Business init() {
+		Business business = new Business();
+		business.email_address = VerifiedValue.init();
+		business.website = VerifiedValue.init();
+		business.credit_card_verification_status = VerifiedValue.init();
+		business.phone = Phone.init();
+		return business;
+	}
 
 }

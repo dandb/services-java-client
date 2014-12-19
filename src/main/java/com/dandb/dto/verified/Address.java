@@ -8,5 +8,10 @@ public class Address {
     public VerifiedValue state;
     public VerifiedValue country;
     public VerifiedValue city;
+	public static Address init() {
+		Address address = new Address();
+		address.address_line_1 = VerifiedValue.init();
+		return address;
+	}
 
 }

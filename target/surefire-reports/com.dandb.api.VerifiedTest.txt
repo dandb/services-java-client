@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.dandb.api.VerifiedTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.326 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.041 sec

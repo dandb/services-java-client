@@ -1,13 +1,25 @@
 package com.dandb.api;
 
-import retrofit.RequestInterceptor;
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit.MockRestAdapter;
 import retrofit.RestAdapter;
-import retrofit.RestAdapter.LogLevel;
+import retrofit.RestAdapter.Builder;
 import retrofit.converter.GsonConverter;
 import serial.MetaDeserializer;
 import serial.VerifiedDeserializer;
 
-import com.dandb.dto.AccessToken;
+import com.dandb.api.dto.ResponseSuccess;
+import com.dandb.api.errors.DandBErrorHandler;
+import com.dandb.api.exceptions.ClientAuthException;
+import com.dandb.api.exceptions.DandBApiException;
+import com.dandb.api.exceptions.UserAuthException;
+import com.dandb.api.http.AuthRequestIntercepter;
+import com.dandb.api.http.UserRequestIntercepter;
+import com.dandb.api.test.AuthStub;
+import com.dandb.api.test.UserServiceStub;
+import com.dandb.api.test.VerifiedServiceStub;
 import com.dandb.dto.BusinessSearchResults;
 import com.dandb.dto.OAuthRequest;
 import com.dandb.dto.UserToken;
@@ -16,56 +28,125 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+@SuppressWarnings("rawtypes")
 public class DandB {
 	
-	private Auth authService;
-	
-	private RestAdapter restAdapter;
-
 	Gson gson = new GsonBuilder()
 	    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 	    .registerTypeAdapter(BusinessSearchResults.class, new MetaDeserializer<BusinessSearchResults>())
 	    .registerTypeAdapter(VerifiedBusiness.class, new VerifiedDeserializer())
 	    .registerTypeAdapter(UserToken.class, new MetaDeserializer<UserToken>())
+	    .registerTypeAdapter(ResponseSuccess.class, new MetaDeserializer<ResponseSuccess>())
 	    .create();
-
-	protected AccessToken accessToken = new AccessToken();
 	
-	public DandB() {
-		this.authService = this.getRestAdapterForAuth().create(Auth.class);
-		this.restAdapter = this.getRestAdapter();
+	private static final Map<Class, Object> map;
+    static {
+        map = new HashMap<Class, Object>();
+        map.put(UserService.class, new UserServiceStub());
+        map.put(VerifiedService.class, new VerifiedServiceStub());
+        map.put(Auth.class, new AuthStub());
+    }
+
+	private String access_token;
+
+	private DandBConfig config;
+
+	private UserToken userToken;
+	
+	public DandB(DandBConfig config) throws ClientAuthException, DandBApiException {
+		if(!config.ready()){
+			throw new DandBApiException("You must supply a client id and client secret or an access token.");
+		}
+		this.config = config; 
+		this.access_token = config.getAccessToken();
+		
 	}
 
-	private RestAdapter getRestAdapter() {
-		return new RestAdapter.Builder()
-			.setEndpoint("https://api-qa.malibucoding.com")
-			.setRequestInterceptor(requestInterceptor)
-			.setLogLevel(LogLevel.FULL)
+	public VerifiedService verified(String email, String password) throws UserAuthException, ClientAuthException{
+		return verified(userToken.user_token);
+	}
+	
+	public VerifiedService verified(String userToken) throws ClientAuthException {
+		return verifiedCommon(userToken);
+	}
+	
+	public VerifiedService verified() throws ClientAuthException{
+		RestAdapter build = restAdapterCommonClientAuth(new RestAdapter.Builder())
 			.setConverter(new GsonConverter(gson))
 			.build();
+		return createService(build, VerifiedService.class);
+	}
+	
+	public UserToken userLogin(String email, String password) throws UserAuthException, ClientAuthException{
+		return getUserToken(email, password);
+	}
+	
+	public UserService users(String userToken) throws ClientAuthException {
+		return userInterceptedService(userToken, UserService.class);
+	}
+	
+	public UserToken getUserToken(String email, String password) throws UserAuthException, ClientAuthException{
+		if(userToken == null){
+			RestAdapter build = restAdapterCommon(new RestAdapter.Builder()
+			.setRequestInterceptor(new AuthRequestIntercepter(getAccessToken()))
+			.setConverter(new GsonConverter(gson)))
+				.build();
+			userToken = createService(build, UserService.class).login(email, password);
+		}
+		return userToken;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private <T> T createService(RestAdapter build, Class<T> clazz){
+		return this.createService(build, clazz, (T) map.get(clazz));
+	}
+	
+	private <T> T createService(RestAdapter build, Class<T> clazz, T t) {
+		if(config.isTestMode()){
+			MockRestAdapter mock = MockRestAdapter.from(build);
+			mock.setDelay(0);
+			mock.setErrorPercentage(0);
+			return mock.create(clazz, t);
+		} else {
+			return build.create(clazz);
+		}
+	}
+
+	private Builder restAdapterCommonClientAuth(RestAdapter.Builder builder) throws ClientAuthException {
+		builder.setRequestInterceptor(new AuthRequestIntercepter(getAccessToken()));
+		return restAdapterCommon(builder);
+	}
+	
+	public String getAccessToken() throws ClientAuthException{
+		if(access_token == null){ 
+			Auth createService = this.createService(this.getRestAdapterForAuth(), Auth.class);
+			access_token = createService
+				.authenticate(new OAuthRequest(config.getClientId(), config.getClientSecret())).access_token;
+		}
+		return access_token;
+	}
+	
+	private Builder restAdapterCommon(RestAdapter.Builder builder) {
+		return builder
+				.setEndpoint(config.getEndpoint())
+				.setErrorHandler(new DandBErrorHandler())
+				.setLogLevel(config.getLogLevel());
 	}
 	
 	private RestAdapter getRestAdapterForAuth() {
-		return new RestAdapter.Builder()
-			.setEndpoint("https://api-qa.malibucoding.com")
-			.build();
+		return restAdapterCommon(new RestAdapter.Builder()).build();
 	}
-	
-	private RequestInterceptor requestInterceptor = new RequestInterceptor() {
-		  public void intercept(RequestFacade request) {
-			  if(accessToken.access_token == null){
-				  accessToken = authService.authenticate(new OAuthRequest("cmayfield", ""));
-			  }
-			  request.addHeader("access-token", accessToken.access_token);
-		  }
-	};
-	
-	public Verified verified(){
-		return restAdapter.create(Verified.class);
+
+	private VerifiedService verifiedCommon(String userToken) throws ClientAuthException {
+		return userInterceptedService(userToken, VerifiedService.class);
 	}
-	
-	public UserAuth userAuth(){
-		return restAdapter.create(UserAuth.class);
+
+	private <T> T  userInterceptedService(String userToken, Class<T> clazz)
+			throws ClientAuthException {
+		RestAdapter build = restAdapterCommon(new RestAdapter.Builder()
+				.setRequestInterceptor(new UserRequestIntercepter(getAccessToken(), userToken))
+				.setConverter(new GsonConverter(gson)))
+					.build();
+		return this.createService(build, clazz);
 	}
-	
 }

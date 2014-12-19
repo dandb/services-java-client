@@ -10,4 +10,10 @@ public class AccessToken {
     public String token_type;
     public String scope;
     public String refresh_token;
+    
+    public static AccessToken init(){
+    	AccessToken accessToken = new AccessToken();
+    	accessToken.access_token = "access_token";
+		return accessToken;
+    }
 }

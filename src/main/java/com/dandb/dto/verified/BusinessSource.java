@@ -17,5 +17,11 @@ public class BusinessSource {
     public String _duns_number;
     public User user;
     public Verification verification;
+	public static BusinessSource init() {
+		BusinessSource businessSource = new BusinessSource();
+		businessSource.address = Address.init();
+		businessSource.business = Business.init();
+		return businessSource;
+	}
 
 }

@@ -6,6 +6,14 @@ public class VerifiedValue {
     public String verification_timestamp;
     public String verification_status;
     public String value;
+    
+    public static VerifiedValue init(){
+    	return new VerifiedValue();
+    }
+    
+    public String getValueOrNA(){
+    	return hasValue() ? value : "N/A";
+    }
 
     public boolean hasValue(){
     	return value != null && !value.isEmpty();
@@ -30,7 +38,7 @@ public class VerifiedValue {
     	return verification_status != null && verification_status.equals("PENDING");
     }
     
-    public boolean isNotVerified(){
-    	return !this.isVerified() || !this.isPending();
+    public boolean isNotVerifiedOrPending(){
+    	return !this.isVerified() && !this.isPending();
     }
 } 
