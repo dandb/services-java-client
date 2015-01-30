@@ -18,9 +18,11 @@ import com.dandb.api.exceptions.UserAuthException;
 import com.dandb.api.http.AuthRequestIntercepter;
 import com.dandb.api.http.UserRequestIntercepter;
 import com.dandb.api.test.AuthStub;
+import com.dandb.api.test.BusinessServiceStub;
 import com.dandb.api.test.UserServiceStub;
 import com.dandb.api.test.VerifiedServiceStub;
 import com.dandb.dto.BusinessSearchResults;
+import com.dandb.dto.VerifiedBusinessSearchResults;
 import com.dandb.dto.OAuthRequest;
 import com.dandb.dto.UserToken;
 import com.dandb.dto.verified.VerifiedBusiness;
@@ -33,6 +35,7 @@ public class DandB {
 	
 	Gson gson = new GsonBuilder()
 	    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+	    .registerTypeAdapter(VerifiedBusinessSearchResults.class, new MetaDeserializer<VerifiedBusinessSearchResults>())
 	    .registerTypeAdapter(BusinessSearchResults.class, new MetaDeserializer<BusinessSearchResults>())
 	    .registerTypeAdapter(VerifiedBusiness.class, new VerifiedDeserializer())
 	    .registerTypeAdapter(UserToken.class, new MetaDeserializer<UserToken>())
@@ -44,6 +47,7 @@ public class DandB {
         map = new HashMap<Class, Object>();
         map.put(UserService.class, new UserServiceStub());
         map.put(VerifiedService.class, new VerifiedServiceStub());
+        map.put(BusinessService.class, new BusinessServiceStub());
         map.put(Auth.class, new AuthStub());
     }
 
@@ -83,6 +87,13 @@ public class DandB {
 	
 	public UserService users(String userToken) throws ClientAuthException {
 		return userInterceptedService(userToken, UserService.class);
+	}
+	
+	public BusinessService business() throws ClientAuthException {
+		RestAdapter build = restAdapterCommonClientAuth(new RestAdapter.Builder())
+				.setConverter(new GsonConverter(gson))
+				.build();
+		return createService(build, BusinessService.class);
 	}
 	
 	public UserToken getUserToken(String email, String password) throws UserAuthException, ClientAuthException{

@@ -11,14 +11,14 @@ import com.dandb.api.VerifiedService;
 import com.dandb.api.VerifyCodeRequest;
 import com.dandb.api.dto.ResponseSuccess;
 import com.dandb.api.exceptions.VerificationException;
-import com.dandb.dto.BusinessSearchResults;
+import com.dandb.dto.VerifiedBusinessSearchResults;
 import com.dandb.dto.PhoneRequest;
 import com.dandb.dto.verified.VerifiedBusiness;
 
 public class VerifiedServiceStub implements VerifiedService{
 
-	public BusinessSearchResults searchBusinesses(@Query("keywords") String keywords){
-		return BusinessSearchResults.init();
+	public VerifiedBusinessSearchResults searchBusinesses(@Query("keywords") String keywords){
+		return VerifiedBusinessSearchResults.init();
 	}
 	
 	public VerifiedBusiness fetchBusinessProfile(@Path("id") BigInteger businessId) throws VerificationException{
