@@ -16,15 +16,16 @@ import com.dandb.api.exceptions.ClientAuthException;
 import com.dandb.api.exceptions.DandBApiException;
 import com.dandb.api.exceptions.UserAuthException;
 import com.dandb.api.http.AuthRequestIntercepter;
+import com.dandb.api.http.TimeoutUrlConnectionClient;
 import com.dandb.api.http.UserRequestIntercepter;
 import com.dandb.api.test.AuthStub;
 import com.dandb.api.test.BusinessServiceStub;
 import com.dandb.api.test.UserServiceStub;
 import com.dandb.api.test.VerifiedServiceStub;
 import com.dandb.dto.BusinessSearchResults;
-import com.dandb.dto.VerifiedBusinessSearchResults;
 import com.dandb.dto.OAuthRequest;
 import com.dandb.dto.UserToken;
+import com.dandb.dto.VerifiedBusinessSearchResults;
 import com.dandb.dto.verified.VerifiedBusiness;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -96,6 +97,10 @@ public class DandB {
 		return createService(build, BusinessService.class);
 	}
 	
+	public BusinessService business(String userToken) throws ClientAuthException {
+		return userInterceptedService(userToken, BusinessService.class);
+	}
+	
 	public UserToken getUserToken(String email, String password) throws UserAuthException, ClientAuthException{
 		if(userToken == null){
 			RestAdapter build = restAdapterCommon(new RestAdapter.Builder()
@@ -141,7 +146,8 @@ public class DandB {
 		return builder
 				.setEndpoint(config.getEndpoint())
 				.setErrorHandler(new DandBErrorHandler())
-				.setLogLevel(config.getLogLevel());
+				.setLogLevel(config.getLogLevel())
+				.setClient(new TimeoutUrlConnectionClient(config.getTimeout()));
 	}
 	
 	private RestAdapter getRestAdapterForAuth() {

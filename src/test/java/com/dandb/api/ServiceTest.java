@@ -15,6 +15,7 @@ public class ServiceTest {
 		dandb = new DandB(new DandBConfig.Builder()
 		.setClientId("client")
 		.setClientSecret("secret")
+		.setTimeout(150000)
 		.setTestMode(true)
 		.setLogLevel(LogLevel.FULL)
 		.setEndpoint("https://api-qa.malibucoding.com").build());

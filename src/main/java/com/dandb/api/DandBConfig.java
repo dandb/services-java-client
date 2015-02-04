@@ -8,11 +8,12 @@ public class DandBConfig {
 	private String clientSecret;
 	private String accessToken;
 	private String endpoint;
+	private int timeout = 15000;
 	private boolean testMode;
 	private LogLevel logLevel = LogLevel.BASIC;
 
 	private DandBConfig(String clientId, String clientSecret,
-			String accessToken, String endpoint, boolean testMode, LogLevel logLevel) {
+			String accessToken, String endpoint, int timeout, boolean testMode, LogLevel logLevel) {
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
 		this.accessToken = accessToken;
@@ -49,11 +50,16 @@ public class DandBConfig {
 		return testMode;
 	}
 
+	public int getTimeout() {
+		return timeout;
+	}
+
 	public static class Builder {
 		private String clientId;
 		private String clientSecret;
 		private String accessToken;
 		private String endpoint;
+		private int timeout;
 		private boolean testMode;
 		private LogLevel logLevel = LogLevel.BASIC;
 
@@ -99,8 +105,13 @@ public class DandBConfig {
 			return this;
 		}
 		
+		public Builder setTimeout(int timeout){
+			this.timeout = timeout;
+			return this;
+		}
+		
 		public DandBConfig build(){
-			return new DandBConfig(clientId, clientSecret, accessToken, endpoint, testMode, logLevel);
+			return new DandBConfig(clientId, clientSecret, accessToken, endpoint, timeout, testMode, logLevel);
 		}
 
 	}

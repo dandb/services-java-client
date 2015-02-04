@@ -1,10 +1,11 @@
 package com.dandb.dto;
 
-import java.math.BigInteger;
-import java.util.Random;
+import java.io.Serializable;
 
-public class BusinessSearchResult {
+public class BusinessSearchResult implements Serializable{
 
+	private static final long serialVersionUID = 6509753369604474439L;
+	
 	public String duns;
 	public String name;
 	public String address;
