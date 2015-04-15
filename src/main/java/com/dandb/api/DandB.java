@@ -7,6 +7,7 @@ import retrofit.MockRestAdapter;
 import retrofit.RestAdapter;
 import retrofit.RestAdapter.Builder;
 import retrofit.converter.GsonConverter;
+import serial.BusinessDetailDeserializer;
 import serial.MetaDeserializer;
 import serial.VerifiedDeserializer;
 
@@ -22,6 +23,7 @@ import com.dandb.api.test.AuthStub;
 import com.dandb.api.test.BusinessServiceStub;
 import com.dandb.api.test.UserServiceStub;
 import com.dandb.api.test.VerifiedServiceStub;
+import com.dandb.dto.BusinessDetail;
 import com.dandb.dto.BusinessSearchResults;
 import com.dandb.dto.OAuthRequest;
 import com.dandb.dto.UserToken;
@@ -41,6 +43,7 @@ public class DandB {
 	    .registerTypeAdapter(VerifiedBusiness.class, new VerifiedDeserializer())
 	    .registerTypeAdapter(UserToken.class, new MetaDeserializer<UserToken>())
 	    .registerTypeAdapter(ResponseSuccess.class, new MetaDeserializer<ResponseSuccess>())
+	    .registerTypeAdapter(BusinessDetail.class,  new BusinessDetailDeserializer())
 	    .create();
 	
 	private static final Map<Class, Object> map;
@@ -96,11 +99,11 @@ public class DandB {
 				.build();
 		return createService(build, BusinessService.class);
 	}
-	
+
 	public BusinessService business(String userToken) throws ClientAuthException {
 		return userInterceptedService(userToken, BusinessService.class);
 	}
-	
+
 	public UserToken getUserToken(String email, String password) throws UserAuthException, ClientAuthException{
 		if(userToken == null){
 			RestAdapter build = restAdapterCommon(new RestAdapter.Builder()
@@ -111,7 +114,7 @@ public class DandB {
 		}
 		return userToken;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private <T> T createService(RestAdapter build, Class<T> clazz){
 		return this.createService(build, clazz, (T) map.get(clazz));
