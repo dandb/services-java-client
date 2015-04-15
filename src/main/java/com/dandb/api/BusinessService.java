@@ -9,6 +9,7 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 
 import com.dandb.api.dto.ResponseSuccess;
+import com.dandb.dto.BusinessDetail;
 import com.dandb.dto.BusinessSearchResults;
 import com.dandb.dto.TradeReferenceRequest;
 
@@ -27,5 +28,7 @@ public interface BusinessService {
 	@Headers("Content-Type: application/json")
 	@POST("/v1/business/{duns}/trade")
 	public void addTradeReferenceAsync(@Path("duns") String duns, @Body TradeReferenceRequest tradeReferenceRequest, Callback<ResponseSuccess> callback);
-	
+
+    @GET("/v1/business/{duns}")
+    public BusinessDetail getBusinessDetails(@Path("duns") String duns);
 }

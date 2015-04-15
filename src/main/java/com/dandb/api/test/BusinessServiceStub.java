@@ -1,7 +1,6 @@
 package com.dandb.api.test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.client.Header;
@@ -9,6 +8,7 @@ import retrofit.client.Response;
 
 import com.dandb.api.BusinessService;
 import com.dandb.api.dto.ResponseSuccess;
+import com.dandb.dto.BusinessDetail;
 import com.dandb.dto.BusinessSearchResults;
 import com.dandb.dto.TradeReferenceRequest;
 
@@ -36,6 +36,11 @@ public class BusinessServiceStub implements BusinessService{
 		callback.success(ResponseSuccess.init(true), new Response("url", 200, "reason", new ArrayList<Header>(), null));
 		
 	}
+
+    public BusinessDetail getBusinessDetails(String duns) {
+        // TODO Auto-generated method stub
+        return new BusinessDetail();
+    }
 
 	
 }
