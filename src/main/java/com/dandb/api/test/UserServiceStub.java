@@ -2,11 +2,13 @@ package com.dandb.api.test;
 
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
+import retrofit.http.GET;
 import retrofit.http.POST;
 
 import com.dandb.api.UserService;
 import com.dandb.api.dto.ResponseSuccess;
 import com.dandb.api.exceptions.UserAuthException;
+import com.dandb.dto.UserEntitlements;
 import com.dandb.dto.UserToken;
 
 public class UserServiceStub implements UserService{
@@ -22,4 +24,9 @@ public class UserServiceStub implements UserService{
 		return UserToken.init();
 	}
 
+	@GET("/v1/user/entitlements")
+    public UserEntitlements getUserEntitlements() throws UserAuthException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

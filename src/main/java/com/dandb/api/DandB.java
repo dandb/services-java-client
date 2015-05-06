@@ -9,6 +9,7 @@ import retrofit.RestAdapter.Builder;
 import retrofit.converter.GsonConverter;
 import serial.BusinessDetailDeserializer;
 import serial.MetaDeserializer;
+import serial.UserEntitlementsDeserializer;
 import serial.VerifiedDeserializer;
 
 import com.dandb.api.dto.ResponseSuccess;
@@ -26,6 +27,7 @@ import com.dandb.api.test.VerifiedServiceStub;
 import com.dandb.dto.BusinessDetail;
 import com.dandb.dto.BusinessSearchResults;
 import com.dandb.dto.OAuthRequest;
+import com.dandb.dto.UserEntitlements;
 import com.dandb.dto.UserToken;
 import com.dandb.dto.VerifiedBusinessSearchResults;
 import com.dandb.dto.verified.VerifiedBusiness;
@@ -44,6 +46,7 @@ public class DandB {
 	    .registerTypeAdapter(UserToken.class, new MetaDeserializer<UserToken>())
 	    .registerTypeAdapter(ResponseSuccess.class, new MetaDeserializer<ResponseSuccess>())
 	    .registerTypeAdapter(BusinessDetail.class,  new BusinessDetailDeserializer())
+	    .registerTypeAdapter(UserEntitlements.class,  new UserEntitlementsDeserializer())
 	    .create();
 	
 	private static final Map<Class, Object> map;
